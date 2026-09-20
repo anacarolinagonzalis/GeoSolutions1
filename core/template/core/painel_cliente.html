@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Portal do Cliente - GeoSolutions</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f6f9; }
+        .card { background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .status { font-weight: bold; color: #2e7d32; }
+    </style>
+</head>
+<body>
+    <h1>Meus Projetos Ambientais</h1>
+    
+    {% for projeto in projetos %}
+        <div class="card">
+            <h2>{{ projeto.titulo }}</h2>
+            <p><strong>Status:</strong> <span class="status">{{ projeto.get_status_display }}</span></p>
+            <p><strong>Prazo de Vencimento:</strong> {{ projeto.prazo_vencimento|date:"d/m/Y" }}</p>
+            <a href="{% url 'detalhe_projeto_cliente' projeto.pk %}">Ver Detalhes e Inserir Observações</a>
+        </div>
+    {% empty %}
+        <p>Nenhum projeto encontrado para o seu usuário.</p>
+    {% endfor %}
+</body>
+</html>
