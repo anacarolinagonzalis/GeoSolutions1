@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Projeto - {{ projeto.titulo }}</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .btn-voltar {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #2e7d32;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .btn-voltar:hover {
+            text-decoration: underline;
+        }
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+        h1, h2, h3 {
+            margin-top: 0;
+            color: #1b5e20;
+        }
+        .grid-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .info-item {
+            background: #f9f9f9;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 4px solid #2e7d32;
+        }
+        .info-item strong {
+            display: block;
+            color: #555;
+            font-size: 0.9em;
+            margin-bottom: 4px;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 0.9em;
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .lista-itens {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .lista-itens li {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .lista-itens li:last-child {
+            border-bottom: none;
+        }
+        .btn-download {
+            background-color: #2e7d32;
+            color: white;
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+        .btn-download:hover {
+            background-color: #1b5e20;
+        }
+        /* Estilos do Formulário */
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            resize: vertical;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+        button[type="submit"] {
+            background-color: #2e7d32;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button[type="submit"]:hover {
+            background-color: #1b5e20;
+        }
+        /* Timeline de Observações */
+        .obs-item {
+            background: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+        .obs-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85em;
+            color: #777;
+            margin-bottom: 8px;
+        }
+        .obs-autor {
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <a href="{% url 'painel_cliente' %}" class="btn-voltar">← Voltar para Meus Projetos</a>
+
+    <!-- CABEÇALHO DO PROJETO -->
+    <div class="card">
+        <h1>{{ projeto.titulo }}</h1>
+        
+        <div class="grid-info">
+            <div class="info-item">
+                <strong>Cliente</strong>
+                {{ projeto.cliente.nome_empresa }}
+            </div>
+            <div class="info-item">
+                <strong>Órgão Ambiental</strong>
+                {{ projeto.orgao_ambiental.sigla|default:"Não especificado" }}
+            </div>
+            <div class="info-item">
+                <strong>Status Atual</strong>
+                <span class="status-badge">{{ projeto.get_status_display }}</span>
+            </div>
+            <div class="info-item">
+                <strong>Prazo de Vencimento</strong>
+                {{ projeto.prazo_vencimento|date:"d/m/Y" }}
+            </div>
+        </div>
+    </div>
+
+    <!-- DOCUMENTOS ANEXADOS (PERSISTÊNCIA DOCUMENTAL) -->
+    <div class="card">
+        <h2>Documentos do Processo</h2>
+        {% if projeto.documentos.all %}
+            <ul class="lista-itens">
+                {% for doc in projeto.documentos.all %}
+                    <li>
+                        <span>📄 <strong>{{ doc.titulo }}</strong> <small>({{ doc.data_upload|date:"d/m/Y" }})</small></span>
+                        <a href="{{ doc.arquivo.url }}" class="btn-download" target="_blank">Visualizar / Baixar</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Nenhum documento anexado a este processo até o momento.</p>
+        {% endif %}
+    </div>
+
+    <!-- SERVIÇOS VINCULADOS (POLIMORFISMO) -->
+    <div class="card">
+        <h2>Serviços Ambientais Associados</h2>
+        {% if projeto.servicos.all %}
+            <ul class="lista-itens">
+                {% for servico in projeto.servicos.all %}
+                    <li>
+                        <div>
+                            <strong>{{ servico.nome_servico }}</strong><br>
+                            <small>
+                                {% if servico.servicolicenciamento %}
+                                    Licenciamento (Fase: {{ servico.servicolicenciamento.fase }} | Licença Nº: {{ servico.servicolicenciamento.numero_licenca }})
+                                {% elif servico.servicolaudotecnico %}
+                                    Laudo Técnico (ART Nº: {{ servico.servicolaudotecnico.art_numero }} | Área: {{ servico.servicolaudotecnico.area_estudo_hectares }} ha)
+                                {% else %}
+                                    Serviço Geral
+                                {% endif %}
+                            </small>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Nenhum serviço detalhado foi registrado para este projeto.</p>
+        {% endif %}
+    </div>
+
+    <!-- FORMULÁRIO PARA ENVIAR OBSERVAÇÃO -->
+    <div class="card">
+        <h2>Adicionar Observação / Solicitação</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <textarea name="observacao" placeholder="Escreva aqui dúvidas, atualizações ou observações referentes a este processo..." required></textarea>
+            <button type="submit">Enviar Observação</button>
+        </form>
+    </div>
+
+    <!-- HISTÓRICO DE OBSERVAÇÕES -->
+    <div class="card">
+        <h2>Histórico de Mensagens e Observações</h2>
+        {% if projeto.observacoes.all %}
+            {% for obs in projeto.observacoes.all %}
+                <div class="obs-item">
+                    <div class="obs-header">
+                        <span class="obs-autor">{{ obs.autor.get_full_name|default:obs.autor.username }}</span>
+                        <span>{{ obs.data_criacao|date:"d/m/Y H:i" }}</span>
+                    </div>
+                    <p style="margin: 0;">{{ obs.texto|linebreaksbr }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Nenhuma observação cadastrada para este projeto.</p>
+        {% endif %}
+    </div>
+</div>
+
+</body>
+</html>
