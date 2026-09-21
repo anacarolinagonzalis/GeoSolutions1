@@ -1,6 +1,7 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Group, User
 from polymorphic.models import PolymorphicModel
+
 
 # --- PERFIS DE USUÁRIO ---
 class Perfil(models.Model):
@@ -93,3 +94,10 @@ class ObservacaoCliente(models.Model):
     autor = models.ForeignKey(User, on_delete=models.CASCADE)
     texto = models.TextField()
     data_criacao = models.DateTimeField(auto_now_add=True)
+
+
+# Tradução dos nomes nativos do Django no Admin
+Group._meta.verbose_name = "Grupo"
+Group._meta.verbose_name_plural = "Grupos"
+User._meta.verbose_name = "Usuário"
+User._meta.verbose_name_plural = "Usuários"
