@@ -1,8 +1,23 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import User, Group
+from django.contrib.auth.forms import ReadOnlyPasswordHashWidget
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.utils.html import format_html
 from polymorphic.admin import PolymorphicParentModelAdmin, PolymorphicChildModelAdmin
-from .models import Perfil, Cliente, OrgaoAmbiental, Projeto, ServicoBase, ServicoLicenciamento, ServicoLaudoTecnico, DocumentoProjeto, ObservacaoCliente
+
+from .models import (
+    Perfil, 
+    Cliente, 
+    OrgaoAmbiental, 
+    Projeto, 
+    ServicoBase, 
+    ServicoLicenciamento, 
+    ServicoLaudoTecnico, 
+    DocumentoProjeto, 
+    ObservacaoCliente
+)
 
 # --- INLINES ---
 class DocumentoInline(admin.TabularInline):
@@ -40,6 +55,24 @@ class ServicoLaudoTecnicoAdmin(PolymorphicChildModelAdmin):
 class ServicoBaseParentAdmin(PolymorphicParentModelAdmin):
     base_model = ServicoBase
     child_models = (ServicoLicenciamento, ServicoLaudoTecnico)
+
+# --- WIDGET PARA MANTER O BOTÃO E REMOVER O TEXTO TÉCNICO DO HASH ---
+class LimpoPasswordHashWidget(ReadOnlyPasswordHashWidget):
+    def render(self, name, value, attrs=None, renderer=None):
+        url = reverse('admin:auth_user_password_change', args=[self.instance.pk]) if hasattr(self, 'instance') and self.instance else '../password/'
+        return format_html('<a class="button" href="{}">Reconfigurar senha</a>', url)
+
+# --- REMOVER HASH DA SENHA E CUSTOMIZAR USER ADMIN ---
+admin.site.unregister(User)
+
+@admin.register(User)
+class CustomUserAdmin(UserAdmin):
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        widget = LimpoPasswordHashWidget()
+        widget.instance = self.get_object(request, object_id)
+        self.form.base_fields['password'].widget = widget
+        self.form.base_fields['password'].help_text = "As senhas são armazenadas de forma criptografada por segurança."
+        return super().change_view(request, object_id, form_url, extra_context)
 
 # --- OUTROS REGISTROS ---
 admin.site.register(Perfil)

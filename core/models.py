@@ -1,7 +1,13 @@
 from django.db import models
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import User, Group
+from django.core.validators import RegexValidator
 from polymorphic.models import PolymorphicModel
 
+# --- VALIDADOR PARA ACEITAR APENAS NÚMEROS ---
+apenas_numeros = RegexValidator(
+    regex=r'^\d+$',
+    message='Este campo aceita apenas números.'
+)
 
 # --- PERFIS DE USUÁRIO ---
 class Perfil(models.Model):
@@ -28,8 +34,33 @@ class Cliente(models.Model):
     email = models.EmailField()
     usuario_vinculado = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, blank=True)
 
+    # CAMPOS DE TELEFONE COM MÁSCARA
+    ddi = models.CharField(
+        max_length=3, 
+        default="55", 
+        validators=[apenas_numeros], 
+        verbose_name="Código do País (DDI)",
+        help_text="Apenas números (Ex: 55)"
+    )
+    ddd = models.CharField(
+        max_length=2, 
+        validators=[apenas_numeros], 
+        verbose_name="Código de Área (DDD)",
+        help_text="Apenas 2 dígitos (Ex: 11)"
+    )
+    telefone_numero = models.CharField(
+        max_length=9, 
+        validators=[apenas_numeros], 
+        verbose_name="Número do Telefone",
+        help_text="Apenas números (até 9 dígitos)"
+    )
+
     def __str__(self):
         return self.nome_empresa
+
+    @property
+    def telefone_completo(self):
+        return f"+{self.ddi} ({self.ddd}) {self.telefone_numero}"
 
 # --- ÓRGÃO AMBIENTAL ---
 class OrgaoAmbiental(models.Model):
@@ -94,7 +125,6 @@ class ObservacaoCliente(models.Model):
     autor = models.ForeignKey(User, on_delete=models.CASCADE)
     texto = models.TextField()
     data_criacao = models.DateTimeField(auto_now_add=True)
-
 
 # Tradução dos nomes nativos do Django no Admin
 Group._meta.verbose_name = "Grupo"

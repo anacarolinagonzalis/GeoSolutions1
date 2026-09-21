@@ -1,0 +1,10 @@
+/* Oculta os detalhes técnicos do Hash da Senha no formulário do usuário */
+.field-password .help {
+    display: none !important;
+}
+
+/* Mantém visível apenas o botão de Reconfigurar Senha e o aviso explicativo */
+.field-password .help:has(a), 
+.field-password form {
+    display: block !important;
+}
