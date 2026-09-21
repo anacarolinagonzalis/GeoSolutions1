@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.html import format_html
 from polymorphic.admin import PolymorphicParentModelAdmin, PolymorphicChildModelAdmin
+from .forms import ClienteForm
 
 from .models import (
     Perfil, 
@@ -83,3 +84,9 @@ admin.site.register(OrgaoAmbiental)
 admin.site.site_header = "GeoSolutions - Moriah Geotecnologia"
 admin.site.site_title = "GeoSolutions Admin"
 admin.site.index_title = "Painel de Controle e Gestão Ambiental"
+
+@admin.register(Cliente)
+class ClienteAdmin(admin.ModelAdmin):
+    form = ClienteForm
+    list_display = ('nome_empresa', 'cnpj', 'contato_nome', 'email', 'telefone_completo')
+    search_fields = ('nome_empresa', 'cnpj', 'contato_nome')
