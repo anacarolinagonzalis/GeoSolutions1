@@ -1,6 +1,8 @@
 from django.contrib import admin
 from polymorphic.admin import PolymorphicParentModelAdmin, PolymorphicChildModelAdmin
 from .models import Perfil, Cliente, OrgaoAmbiental, Projeto, ServicoBase, ServicoLicenciamento, ServicoLaudoTecnico, DocumentoProjeto, ObservacaoCliente
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 class DocumentoInline(admin.TabularInline):
     model = DocumentoProjeto
@@ -38,3 +40,22 @@ admin.site.register(OrgaoAmbiental)
 admin.site.site_header = "GeoSolutions - Moriah Geotecnologia"
 admin.site.site_title = "GeoSolutions Administrador"
 admin.site.index_title = "Painel de Controle e Gestão Ambiental"
+
+
+# Função de Ação em Lote no Admin
+@admin.action(description="📄 Gerar Relatório Selecionados (Impressão/PDF)")
+def gerar_relatorio_action(modeladmin, request, queryset):
+    selected_ids = ",".join(str(obj.id) for obj in queryset)
+    url = reverse('relatorio_projetos') + f"?ids={selected_ids}"
+    return HttpResponseRedirect(url)
+
+@admin.register(Projeto)
+class ProjetoAdmin(admin.ModelAdmin):
+    list_display = ('titulo', 'cliente', 'status', 'prazo_vencimento', 'responsavel')
+    list_filter = ('status', 'orgao_ambiental', 'prazo_vencimento')
+    search_fields = ('titulo', 'cliente__nome_empresa')
+    
+    # Registra a ação na lista do Admin
+    actions = [gerar_relatorio_action]
+    
+    inlines = [DocumentoInline, ObservacaoInline]

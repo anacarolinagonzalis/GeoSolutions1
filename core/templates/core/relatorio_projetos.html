@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório de Projetos Ambientais - GeoSolutions</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; color: #333; }
+        .header { text-align: center; border-bottom: 2px solid #2e7d32; padding-bottom: 10px; margin-bottom: 20px; }
+        .header h1 { margin: 0; color: #1b5e20; font-size: 24px; }
+        .header p { margin: 5px 0 0 0; color: #666; font-size: 14px; }
+        .btn-imprimir { background-color: #2e7d32; color: white; border: none; padding: 10px 20px; cursor: pointer; font-size: 14px; border-radius: 4px; margin-bottom: 20px; }
+        .projeto-box { border: 1px solid #ccc; padding: 15px; border-radius: 6px; margin-bottom: 20px; page-break-inside: avoid; }
+        .projeto-box h2 { margin-top: 0; color: #2e7d32; font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        .campo { font-size: 14px; }
+        .campo strong { color: #555; }
+        .descricao { background: #f9f9f9; padding: 10px; border-radius: 4px; font-size: 13px; margin-top: 10px; border-left: 3px solid #2e7d32; }
+        @media print {
+            .btn-imprimir { display: none; }
+            body { margin: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <button onclick="window.print()" class="btn-imprimir">🖨️ Imprimir / Salvar em PDF</button>
+
+    <div class="header">
+        <h1>GeoSolutions - Moriah Geotecnologia</h1>
+        <p>Relatório Gerencial de Projetos e Demandas Ambientais</p>
+    </div>
+
+    {% for projeto in projetos %}
+        <div class="projeto-box">
+            <h2>{{ projeto.titulo }}</h2>
+            <div class="grid">
+                <div class="campo"><strong>Cliente:</strong> {{ projeto.cliente.nome_empresa }}</div>
+                <div class="campo"><strong>Status:</strong> {{ projeto.get_status_display }}</div>
+                <div class="campo"><strong>Prazo de Vencimento:</strong> {{ projeto.prazo_vencimento|date:"d/m/Y" }}</div>
+                <div class="campo"><strong>Órgão Ambiental:</strong> {{ projeto.orgao_ambiental.sigla|default:"Não informado" }}</div>
+            </div>
+            
+            <div class="descricao">
+                <strong>Serviços/Tipos de Projeto:</strong>
+                <ul>
+                    {% for servico in projeto.servicos.all %}
+                        <li>{{ servico.nome_servico }}</li>
+                    {% empty %}
+                        <li>Nenhum serviço detalhado cadastrado.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% empty %}
+        <p>Nenhum projeto encontrado para o relatório.</p>
+    {% endfor %}
+
+</body>
+</html>
