@@ -6,7 +6,6 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.html import format_html
 from polymorphic.admin import PolymorphicParentModelAdmin, PolymorphicChildModelAdmin
-from .forms import ClienteForm
 
 from .models import (
     Perfil, 
@@ -19,6 +18,7 @@ from .models import (
     DocumentoProjeto, 
     ObservacaoCliente
 )
+from .forms import ClienteForm
 
 # --- INLINES ---
 class DocumentoInline(admin.TabularInline):
@@ -35,6 +35,13 @@ def gerar_relatorio_action(modeladmin, request, queryset):
     selected_ids = ",".join(str(obj.id) for obj in queryset)
     url = reverse('relatorio_projetos') + f"?ids={selected_ids}"
     return HttpResponseRedirect(url)
+
+# --- ADMIN DE CLIENTES COM FORMULÁRIO DE MÁSCARA ---
+@admin.register(Cliente)
+class ClienteAdmin(admin.ModelAdmin):
+    form = ClienteForm
+    list_display = ('nome_empresa', 'cnpj', 'contato_nome', 'email', 'telefone_completo')
+    search_fields = ('nome_empresa', 'cnpj', 'contato_nome')
 
 # --- ADMIN DE PROJETOS ---
 @admin.register(Projeto)
@@ -77,16 +84,9 @@ class CustomUserAdmin(UserAdmin):
 
 # --- OUTROS REGISTROS ---
 admin.site.register(Perfil)
-admin.site.register(Cliente)
 admin.site.register(OrgaoAmbiental)
 
 # --- CUSTOMIZAÇÃO DO TÍTULO DO PAINEL ---
 admin.site.site_header = "GeoSolutions - Moriah Geotecnologia"
 admin.site.site_title = "GeoSolutions Admin"
 admin.site.index_title = "Painel de Controle e Gestão Ambiental"
-
-@admin.register(Cliente)
-class ClienteAdmin(admin.ModelAdmin):
-    form = ClienteForm
-    list_display = ('nome_empresa', 'cnpj', 'contato_nome', 'email', 'telefone_completo')
-    search_fields = ('nome_empresa', 'cnpj', 'contato_nome')

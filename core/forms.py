@@ -7,21 +7,24 @@ class ClienteForm(forms.ModelForm):
         fields = '__all__'
         widgets = {
             'ddi': forms.TextInput(attrs={
-                'type': 'number',
+                'type': 'text',
+                'inputmode': 'numeric',
                 'maxlength': '3',
-                'oninput': 'javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);',
+                'oninput': "this.value = this.value.replace(/[^0-9]/g, '');",
                 'placeholder': '55'
             }),
             'ddd': forms.TextInput(attrs={
-                'type': 'number',
+                'type': 'text',
+                'inputmode': 'numeric',
                 'maxlength': '2',
-                'oninput': 'javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);',
+                'oninput': "this.value = this.value.replace(/[^0-9]/g, '');",
                 'placeholder': '11'
             }),
             'telefone_numero': forms.TextInput(attrs={
-                'type': 'number',
-                'maxlength': '9',
-                'oninput': 'javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);',
+                'type': 'text',
+                'inputmode': 'numeric',
+                'maxlength': '10',
+                'oninput': "this.value = this.value.replace(/[^0-9]/g, '');",
                 'placeholder': '999999999'
             }),
         }

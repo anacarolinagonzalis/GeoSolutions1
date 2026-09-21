@@ -27,6 +27,7 @@ class Perfil(models.Model):
         verbose_name_plural = "Perfis"
 
 # --- CADASTRO DE CLIENTE ---
+# --- CADASTRO DE CLIENTE ---
 class Cliente(models.Model):
     nome_empresa = models.CharField(max_length=150)
     cnpj = models.CharField(max_length=20, unique=True)
@@ -34,25 +35,30 @@ class Cliente(models.Model):
     email = models.EmailField()
     usuario_vinculado = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, blank=True)
 
-    # CAMPOS DE TELEFONE COM MÁSCARA
+    # CAMPOS DE TELEFONE COM VALORES PADRÃO
     ddi = models.CharField(
         max_length=3, 
         default="55", 
+        blank=True,
         validators=[apenas_numeros], 
         verbose_name="Código do País (DDI)",
         help_text="Apenas números (Ex: 55)"
     )
     ddd = models.CharField(
         max_length=2, 
+        default="11",
+        blank=True,
         validators=[apenas_numeros], 
         verbose_name="Código de Área (DDD)",
         help_text="Apenas 2 dígitos (Ex: 11)"
     )
     telefone_numero = models.CharField(
-        max_length=9, 
+        max_length=10, 
+        default="000000000",
+        blank=True,
         validators=[apenas_numeros], 
         verbose_name="Número do Telefone",
-        help_text="Apenas números (até 9 dígitos)"
+        help_text="Apenas números"
     )
 
     def __str__(self):
@@ -61,7 +67,7 @@ class Cliente(models.Model):
     @property
     def telefone_completo(self):
         return f"+{self.ddi} ({self.ddd}) {self.telefone_numero}"
-
+    
 # --- ÓRGÃO AMBIENTAL ---
 class OrgaoAmbiental(models.Model):
     nome = models.CharField(max_length=100) # Ex: IBAMA, CETESB
