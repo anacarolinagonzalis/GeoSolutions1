@@ -32,3 +32,9 @@ class ServicoBaseParentAdmin(PolymorphicParentModelAdmin):
 admin.site.register(Perfil)
 admin.site.register(Cliente)
 admin.site.register(OrgaoAmbiental)
+
+
+# Customização do Painel de Administração
+admin.site.site_header = "GeoSolutions - Moriah Geotecnologia"
+admin.site.site_title = "GeoSolutions Administrador"
+admin.site.index_title = "Painel de Controle e Gestão Ambiental"

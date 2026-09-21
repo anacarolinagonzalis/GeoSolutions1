@@ -15,6 +15,10 @@ class Perfil(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.get_tipo_display()}"
 
+    class Meta:
+        verbose_name = "Perfil"
+        verbose_name_plural = "Perfis"
+
 # --- CADASTRO DE CLIENTE ---
 class Cliente(models.Model):
     nome_empresa = models.CharField(max_length=150)
@@ -30,9 +34,13 @@ class Cliente(models.Model):
 class OrgaoAmbiental(models.Model):
     nome = models.CharField(max_length=100) # Ex: IBAMA, CETESB
     sigla = models.CharField(max_length=20)
-
+    
     def __str__(self):
         return self.sigla
+
+    class Meta:
+        verbose_name = "Órgão Ambiental"
+        verbose_name_plural = "Órgãos Ambientais"
 
 # --- PROJETO AMBIENTAL ---
 class Projeto(models.Model):
@@ -60,6 +68,10 @@ class ServicoBase(PolymorphicModel):
 
     def __str__(self):
         return self.nome_servico
+
+    class Meta:
+        verbose_name = "Serviço Ambiental"
+        verbose_name_plural = "Serviços Ambientais"
 
 class ServicoLicenciamento(ServicoBase):
     numero_licenca = models.CharField(max_length=50)
