@@ -1,0 +1,220 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Segoe+UI:wght@400;600&display=swap" rel="stylesheet">
+<style>
+    /* Oculta elementos nativos da interface do Admin e o título 'Acessar' */
+    #nav-sidebar, 
+    #header, 
+    .breadcrumbs,
+    .toggle-nav-sidebar,
+    #content > h1,
+    #content-main > h1 {
+        display: none !important;
+    }
+
+    /* Fundo com gradiente verde escuro */
+    html, body {
+        height: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: linear-gradient(135deg, #12341e 0%, #3ee472 100%) !important;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* Centralização absoluta na tela */
+    #main {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100vw !important;
+        min-height: 100vh !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    #container {
+        background: transparent !important;
+        border: none !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+    }
+
+    #content {
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        display: flex !important;
+        justify-content: center !important;
+    }
+
+    /* Cartão de Login FIXO com Sombra 3D Marcante e Profunda */
+    .login-box {
+        max-width: 420px;
+        width: 90%;
+        background: #ffffff;
+        padding: 40px 30px;
+        border-radius: 18px;
+        
+        /* Sombras multicamadas para criar o efeito de flutuação e relevo permanente */
+        box-shadow: 
+            0 25px 50px -12px rgba(0, 0, 0, 0.55),
+            0 15px 30px -5px rgba(0, 0, 0, 0.35),
+            0 0 0 1px rgba(255, 255, 255, 0.15);
+
+        text-align: center;
+        box-sizing: border-box;
+    }
+
+    .login-box img.logo {
+        max-width: 130px;
+        height: auto;
+        margin-bottom: 15px;
+        filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.15));
+    }
+
+    /* Título GeoSolutions maior com Montserrat */
+    .login-box h1 {
+        font-family: 'Montserrat', sans-serif !important;
+        font-size: 2.2rem !important;
+        font-weight: 800 !important;
+        color: #12341e !important;
+        letter-spacing: -0.5px;
+        margin-top: 10px;
+        margin-bottom: 2px;
+        padding: 0;
+        background: none;
+        text-transform: none;
+    }
+
+    .login-box h1 span.highlight {
+        color: #2e8b57 !important;
+    }
+
+    .login-box p.subtitle {
+        font-family: 'Segoe UI', sans-serif;
+        color: #556b2f;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 25px;
+    }
+
+    .form-row {
+        text-align: left;
+        margin-bottom: 18px;
+        padding: 0 !important;
+        border: none !important;
+    }
+
+    .form-row label {
+        font-weight: 600;
+        color: #2b3a2f;
+        font-size: 0.85rem;
+        margin-bottom: 6px;
+        display: block;
+    }
+
+    .form-row input[type="text"], 
+    .form-row input[type="password"] {
+        width: 100% !important;
+        padding: 10px 12px !important;
+        border: 1px solid #ced4da !important;
+        border-radius: 8px !important;
+        box-sizing: border-box !important;
+        font-size: 0.95rem !important;
+        transition: all 0.2s ease;
+    }
+
+    .form-row input:focus {
+        border-color: #2e8b57 !important;
+        outline: none !important;
+        box-shadow: 0 0 8px rgba(46, 139, 87, 0.4) !important;
+    }
+
+    .submit-row {
+        background: none !important;
+        border: none !important;
+        padding: 10px 0 0 0 !important;
+        margin: 0 !important;
+        text-align: center !important;
+    }
+
+    /* Botão verde do sistema */
+    .submit-row input[type="submit"] {
+        width: 100%;
+        background: linear-gradient(180deg, #1f4e2d 0%, #12341e 100%) !important;
+        color: white !important;
+        border: none !important;
+        padding: 12px !important;
+        border-radius: 8px !important;
+        font-weight: bold !important;
+        font-size: 1rem !important;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(18, 52, 30, 0.35);
+        transition: background 0.3s ease;
+    }
+
+    .submit-row input[type="submit"]:hover {
+        background: linear-gradient(180deg, #276239 0%, #174226 100%) !important;
+    }
+
+    .errornote {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+        border-radius: 6px;
+        padding: 10px;
+        font-size: 0.85rem;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} login{% endblock %}
+
+{% block content %}
+<div class="login-box">
+    <!-- Logotipo da Moriah Geotecnologia -->
+    <img src="{% static 'core/img/logo.png' %}" alt="GeoSolutions Moriah" class="logo">
+    
+    <h1><span class="highlight">Geo</span>Solutions</h1>
+    <p class="subtitle">Moriah Geotecnologia & Gestão Ambiental</p>
+
+    {% if form.errors and not form.non_field_errors %}
+        <p class="errornote">
+            {% if form.errors.items|length == 1 %}{% translate "Please correct the error below." %}{% else %}{% translate "Please correct the errors below." %}{% endif %}
+        </p>
+    {% endif %}
+
+    {% if form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+            <p class="errornote">{{ error }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
+        <div class="form-row">
+            {{ form.username.errors }}
+            <label for="id_username">Usuário:</label>
+            {{ form.username }}
+        </div>
+        
+        <div class="form-row">
+            {{ form.password.errors }}
+            <label for="id_password">Senha:</label>
+            {{ form.password }}
+            <input type="hidden" name="next" value="{{ next }}">
+        </div>
+
+        <div class="submit-row">
+            <input type="submit" value="Acessar Sistema">
+        </div>
+    </form>
+</div>
+{% endblock %}

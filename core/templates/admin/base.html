@@ -1,0 +1,167 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&display=swap');
+
+    /* 1. VARIÁVEIS GLOBAIS DE TEMA DO DJANGO 5 */
+    :root, [data-theme="light"], [data-theme="dark"] {
+        --primary: #12341e !important;
+        --secondary: #1f4e2d !important;
+        --accent: #3ee472 !important;
+        --header-bg: #12341e !important;
+        --header-color: #ffffff !important;
+        --breadcrumbs-bg: #eaf2ec !important;
+        --breadcrumbs-link-color: #12341e !important;
+        --body-bg: #f4f8f5 !important;
+        --darkmode-bg: #f4f8f5 !important;
+        --body-quiet-color: #2c3e50 !important;
+    }
+
+    /* FUNDO CLARO PARA O PAINEL LOGADO */
+    body {
+        font-family: 'Montserrat', sans-serif !important;
+        background-color: #f4f8f5 !important;
+        color: #2c3e50 !important;
+    }
+
+    /* TÍTULOS DO PAINEL DE CONTROLE */
+    #content h1, .content h1 {
+        color: #12341e !important;
+    }
+
+    /* 2. ISOLAMENTO E ESTILIZAÇÃO DA TELA DE LOGIN */
+    body.login {
+        background: #12341e !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* ELIMINA A MOLDURA / MOLDURAS EXTERNAS DO DJANGO */
+    body.login #container,
+    body.login #main,
+    body.login .main,
+    body.login #content-main {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* CARTÃO BRANCO CENTRALIZADO */
+    body.login #content {
+        background: #ffffff !important;
+        border-radius: 16px !important;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4) !important;
+        padding: 40px 30px !important;
+        max-width: 380px !important;
+        margin: 60px auto !important;
+        float: none !important;
+    }
+
+    /* 3. OCULTA TODOS OS TÍTULOS, SUBTÍTULOS E O TEXTO "MORIAH GEOTECNOLOGIA..." */
+    body.login #header,
+    body.login #site-name,
+    body.login #site-name a,
+    body.login .brand-sub,
+    body.login h1,
+    body.login h2,
+    body.login p.subtitle,
+    body.login .branding,
+    body.login #content h1,
+    body.login #content-main h1 {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    body.login .form-row {
+        padding: 8px 0 !important;
+        border: none !important;
+    }
+
+    body.login label {
+        font-weight: 700 !important;
+        color: #12341e !important;
+        font-size: 0.8rem !important;
+        text-transform: uppercase !important;
+        margin-bottom: 5px !important;
+        display: block !important;
+    }
+
+    body.login input[type=text], 
+    body.login input[type=password] {
+        width: 100% !important;
+        padding: 10px 12px !important;
+        border: 2px solid #d0e2d4 !important;
+        border-radius: 6px !important;
+        box-sizing: border-box !important;
+        font-size: 0.9rem !important;
+        background-color: #f8faf9 !important;
+    }
+
+    body.login input[type=text]:focus, 
+    body.login input[type=password]:focus {
+        border-color: #12341e !important;
+        outline: none !important;
+        background-color: #ffffff !important;
+    }
+
+    body.login .submit-row {
+        background: transparent !important;
+        border: none !important;
+        padding: 20px 0 0 0 !important;
+        margin: 0 !important;
+    }
+
+    /* BOTÃO DE SUBMISSÃO EM VERDE COM TEXTO EM BRANCO */
+    body.login input[type=submit] {
+        background: #12341e !important;
+        color: #ffffff !important;
+        width: 100% !important;
+        height: 45px !important;
+        border-radius: 6px !important;
+        font-weight: 800 !important;
+        font-size: 0.85rem !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+        border: none !important;
+        cursor: pointer !important;
+        transition: background 0.2s !important;
+    }
+
+    body.login input[type=submit]:hover {
+        background: #1f4e2d !important;
+    }
+
+    /* 4. TAMANHO E POSICIONAMENTO DA LOGO */
+    body.login #content img,
+    body.login .login-logo img,
+    body.login form img {
+        max-width: 280px !important;
+        width: 100% !important;
+        height: auto !important;
+        display: block !important;
+        margin: 0 auto 20px auto !important;
+    }
+</style>
+{% endblock %}
+
+{% block branding %}
+  {% if not is_popup and not user.is_authenticated %}
+    <!-- Deixa o bloco de marca completamente vazio na página de login -->
+  {% else %}
+    <h1 id="site-name">
+        <a href="{% url 'admin:index' %}">
+            <span class="highlight">Geo</span>Solutions - <span class="brand-sub">Moriah Geotecnologia</span>
+        </a>
+    </h1>
+  {% endif %}
+{% endblock %}

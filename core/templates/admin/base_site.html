@@ -1,0 +1,509 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap');
+
+    /* 1. ESTRUTURA GERAL DA PÁGINA E MARCA D'ÁGUA CENTRALIZADA */
+    html, body {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow-x: hidden !important;
+    }
+
+    body {
+        position: relative !important;
+        background-color: #f4f8f5 !important;
+        background-image: url("{% static 'core/img/logo_fundo.png' %}") !important;
+        background-repeat: no-repeat !important;
+        background-position: center center !important;
+        background-attachment: fixed !important;
+        background-size: 650px auto !important;
+    }
+
+    /* 2. REMOVE A BARRA LATERAL (SIDEBAR) E EXPANDE O CONTEÚDO */
+    #nav-sidebar,
+    .toggle-nav-sidebar,
+    button.toggle-nav-sidebar {
+        display: none !important;
+        visibility: hidden !important;
+        width: 0 !important;
+    }
+
+    #container, #main, #content, .main, #content-main {
+        margin-left: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 3. CABEÇALHO VERDE ESCURO SUPERIOR */
+    #header {
+        background-color: #12341e !important;
+        color: #ffffff !important;
+        padding: 12px 30px !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        box-shadow: none !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    #site-name a {
+        font-family: 'Montserrat', sans-serif !important;
+        font-size: 1.4rem !important;
+        font-weight: 800 !important;
+        color: #ffffff !important;
+        text-decoration: none !important;
+        letter-spacing: -0.5px !important;
+    }
+
+    #site-name a span.highlight { color: #3ee472 !important; }
+    #site-name a span.brand-sub { font-weight: 600 !important; color: #e2f0d9 !important; font-size: 1.1rem !important; }
+
+    #user-tools {
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        font-size: 0.8rem !important;
+        font-weight: 700 !important;
+    }
+
+    #user-tools a[href="/"],
+    .viewsite-link {
+        display: none !important;
+    }
+
+    #user-tools a,
+    #user-tools button,
+    #user-tools form button,
+    #user-tools .theme-toggle {
+        height: 34px !important;
+        padding: 0 14px !important;
+        border: none !important;
+        border-radius: 6px !important;
+        background-color: #ffffff !important;
+        color: #12341e !important;
+        font-weight: 700 !important;
+        font-size: 0.75rem !important;
+        text-transform: uppercase !important;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12) !important;
+        cursor: pointer !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        margin: 0 !important;
+    }
+
+    /* 4. BARRA DE NAVEGAÇÃO HORIZONTAL */
+    .top-nav-bar {
+        background-color: #e2f0d9 !important;
+        border-bottom: 2px solid #b8dac2 !important;
+        padding: 0 30px !important;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .nav-links-wrapper {
+        display: flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+        flex-wrap: wrap !important;
+    }
+
+    .top-nav-bar a {
+        display: inline-flex !important;
+        align-items: center !important;
+        padding: 12px 16px !important;
+        color: #12341e !important;
+        text-decoration: none !important;
+        font-weight: 700 !important;
+        font-size: 0.82rem !important;
+        border-bottom: 3px solid transparent !important;
+        transition: all 0.2s ease !important;
+        white-space: nowrap !important;
+        text-transform: uppercase !important;
+    }
+
+    .top-nav-bar a:hover {
+        background-color: #cde6d5 !important;
+        border-bottom-color: #12341e !important;
+        color: #12341e !important;
+    }
+
+    .top-nav-bar a.active {
+        border-bottom-color: #12341e !important;
+        color: #12341e !important;
+        background-color: #ffffff !important;
+        border-radius: 6px 6px 0 0 !important;
+    }
+
+    /* OCULTA AS TABELAS PADRÃO APENAS NA TELA INICIAL (DASHBOARD) */
+    body.dashboard #content-main,
+    body.dashboard #content-related,
+    body.dashboard .module {
+        display: none !important;
+    }
+
+    /* VISIBILIDADE DO BREADCRUMBS */
+    div.breadcrumbs,
+    .breadcrumbs,
+    .breadcrumbs a {
+        color: #12341e !important;
+        font-weight: 700 !important;
+        font-size: 0.85rem !important;
+        text-decoration: none !important;
+    }
+
+    /* 5. NOTIFICAÇÃO FLUTUANTE (OCULTA POR PADRÃO) */
+    .toast-notif {
+        position: fixed;
+        bottom: 25px;
+        right: 25px;
+        background: #ffffff;
+        border-left: 6px solid #12341e;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        padding: 16px 20px;
+        width: 320px;
+        z-index: 9999;
+        display: none;
+        flex-direction: column;
+        gap: 10px;
+        animation: slideInRight 0.3s ease-out;
+    }
+
+    @keyframes slideInRight {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+
+    .toast-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 800;
+        color: #12341e;
+        font-size: 0.9rem;
+    }
+
+    .toast-close {
+        background: transparent;
+        border: none;
+        font-size: 1.1rem;
+        cursor: pointer;
+        color: #888888;
+        line-height: 1;
+    }
+
+    .toast-close:hover { color: #12341e; }
+
+    .toast-body {
+        font-size: 0.82rem;
+        color: #555555;
+        line-height: 1.4;
+    }
+
+    .btn-toast-action {
+        display: inline-block;
+        background-color: #12341e;
+        color: #ffffff !important;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-decoration: none;
+        text-transform: uppercase;
+        text-align: center;
+        margin-top: 4px;
+        transition: background-color 0.2s;
+    }
+
+    .btn-toast-action:hover {
+        background-color: #2e8b57;
+    }
+
+    /* POP-UP DE RELATÓRIO */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(3px);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+
+    .modal-card {
+        background: #ffffff;
+        width: 100%;
+        max-width: 480px;
+        border-radius: 12px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        overflow: hidden;
+    }
+
+    .modal-header {
+        background: #12341e;
+        color: #ffffff;
+        padding: 16px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-header h3 { margin: 0; font-size: 1.1rem; font-weight: 800; }
+    .modal-close { background: transparent; border: none; color: #ffffff; font-size: 1.4rem; cursor: pointer; }
+
+    .modal-body { padding: 20px; }
+    .modal-field { margin-bottom: 16px; }
+    .modal-field label { display: block; font-weight: 700; color: #12341e; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 6px; }
+    .modal-field select, .modal-field input { width: 100%; padding: 10px 12px; border: 2px solid #d0e2d4; border-radius: 6px; font-size: 0.88rem; background-color: #f8faf9; }
+
+    .modal-footer { padding: 16px 20px; background: #f4f8f5; border-top: 1px solid #e2f0d9; display: flex; justify-content: flex-end; gap: 10px; }
+    .btn-modal-cancel { background: #e0e0e0; color: #333; border: none; padding: 10px 18px; border-radius: 6px; font-weight: 700; cursor: pointer; }
+    .btn-modal-export { background: #12341e; color: #ffffff; border: none; padding: 10px 20px; border-radius: 6px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; }
+</style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}">
+        <span class="highlight">Geo</span>Solutions - <span class="brand-sub">Moriah Geotecnologia</span>
+    </a>
+</h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block footer %}
+{{ block.super }}
+
+<!-- NOTIFICAÇÃO FLUTUANTE NO CANTO INFERIOR DIREITO -->
+<div id="toastNotificacao" class="toast-notif">
+    <div class="toast-header">
+        <span>🔔 Novas Solicitações</span>
+        <button type="button" class="toast-close" id="btnFecharToast">&times;</button>
+    </div>
+    <div class="toast-body" id="toastTexto">
+        Você tem novos projetos cadastrados pelos clientes aguardando análise!
+    </div>
+    <a href="/admin/core/projeto/?status__exact=EM_ANALISE" class="btn-toast-action">
+        Ver Projetos Pendentes →
+    </a>
+</div>
+
+<!-- POP-UP (MODAL) DE CONFIGURAÇÃO DO RELATÓRIO -->
+<div id="modalRelatorio" class="modal-overlay">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3>Gerar Relatório em Planilha</h3>
+            <button type="button" class="modal-close" id="btnFecharModal">&times;</button>
+        </div>
+        <form id="formRelatorio">
+            <div class="modal-body">
+                <div class="modal-field">
+                    <label for="relModulo">Módulo Desejado:</label>
+                    <select id="relModulo" required>
+                        <option value="clientes">👥 Clientes</option>
+                        <option value="projetos">📁 Projetos</option>
+                        <option value="laudos">📄 Laudos Técnicos</option>
+                        <option value="licenciamentos">📜 Licenciamentos</option>
+                        <option value="servicos">🍃 Serviços Ambientais</option>
+                        <option value="orgaos">🏛️ Órgãos Ambientais</option>
+                        <option value="usuarios">🔐 Usuários</option>
+                    </select>
+                </div>
+                <div class="modal-field">
+                    <label for="relDataInicio">Data Inicial:</label>
+                    <input type="date" id="relDataInicio">
+                </div>
+                <div class="modal-field">
+                    <label for="relDataFim">Data Final:</label>
+                    <input type="date" id="relDataFim">
+                </div>
+                <div class="modal-field">
+                    <label for="relFormato">Formato do Arquivo:</label>
+                    <select id="relFormato">
+                        <option value="csv">Planilha CSV (.csv)</option>
+                        <option value="excel">Planilha Excel (.xls)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modal-cancel" id="btnCancelarModal">Cancelar</button>
+                <button type="submit" class="btn-modal-export">⬇️ Baixar Planilha</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var header = document.getElementById('header');
+        if (header) {
+            var nav = document.createElement('nav');
+            nav.className = 'top-nav-bar';
+            
+            var path = window.location.pathname.toLowerCase();
+            var search = window.location.search.toLowerCase();
+            
+            var links = [
+                { name: 'Início', url: "{% url 'admin:index' %}", key: 'admin_index' },
+                { name: 'Usuários & Permissões', url: "/admin/auth/user/", key: '/auth/user/' },
+                { name: 'Clientes', url: "/admin/core/cliente/", key: '/core/cliente/' },
+                { name: 'Projetos <span id="sino-menu"></span>', url: "/admin/core/projeto/?status__exact=EM_ANALISE", key: 'projetos_aba' },
+                { name: '💬 Fale Conosco', url: "/admin/core/projeto/?q=FALE+CONOSCO", key: 'fale_conosco_aba' },
+                { name: 'Laudos Técnicos', url: "/admin/core/servicolaudotecnico/", key: '/core/servicolaudotecnico/' },
+                { name: 'Licenciamentos', url: "/admin/core/servicolicenciamento/", key: '/core/servicolicenciamento/' },
+                { name: 'Serviços Ambientais', url: "/admin/core/servicobase/", key: '/core/servicobase/' },
+                { name: 'Órgãos Ambientais', url: "/admin/core/orgaoambiental/", key: '/core/orgaoambiental/' }
+            ];
+
+            var navLinksHtml = '<div class="nav-links-wrapper">';
+            links.forEach(function(item) {
+                var isActive = false;
+                
+                if (item.key === 'admin_index') {
+                    isActive = (path === item.url.toLowerCase() || path === item.url.toLowerCase() + 'index.html');
+                } else if (item.key === 'fale_conosco_aba') {
+                    isActive = path.includes('/core/projeto/') && search.includes('fale+conosco');
+                } else if (item.key === 'projetos_aba') {
+                    isActive = path.includes('/core/projeto/') && !search.includes('fale+conosco');
+                } else {
+                    isActive = path.includes(item.key.toLowerCase());
+                }
+
+                navLinksHtml += `<a href="${item.url}" class="${isActive ? 'active' : ''}">${item.name}</a>`;
+            });
+            navLinksHtml += '</div>';
+
+            navLinksHtml += `<a href="#" id="link-relatorio" style="background-color: #12341e; color: #ffffff !important; border-radius: 4px; height: 32px; padding: 0 14px !important;">Gerar Relatório</a>`;
+            
+            nav.innerHTML = navLinksHtml;
+            header.parentNode.insertBefore(nav, header.nextSibling);
+
+            // VERIFICAÇÃO DINÂMICA DE PROJETOS EM ANÁLISE
+            fetch('/admin/core/projeto/?status__exact=EM_ANALISE')
+                .then(response => response.text())
+                .then(html => {
+                    var parser = new DOMParser();
+                    var doc = parser.parseFromString(html, 'text/html');
+                    
+                    var hasProjects = doc.querySelectorAll('#result_list tbody tr').length > 0;
+
+                    var toast = document.getElementById('toastNotificacao');
+                    var sinoMenu = document.getElementById('sino-menu');
+
+                    if (hasProjects) {
+                        if (toast) toast.style.display = 'flex';
+                        if (sinoMenu) sinoMenu.innerHTML = '🔔';
+                    } else {
+                        if (toast) toast.style.display = 'none';
+                        if (sinoMenu) sinoMenu.innerHTML = '';
+                    }
+                })
+                .catch(err => {
+                    console.log('Erro ao checar notificações:', err);
+                });
+
+            // CONTROLE DO TOAST DE NOTIFICAÇÃO
+            var toast = document.getElementById('toastNotificacao');
+            var btnFecharToast = document.getElementById('btnFecharToast');
+            if (btnFecharToast && toast) {
+                btnFecharToast.addEventListener('click', function() {
+                    toast.style.display = 'none';
+                });
+            }
+
+            // CONTROLE DO MODAL DE RELATÓRIO
+            var modal = document.getElementById('modalRelatorio');
+            var btnAbrir = document.getElementById('link-relatorio');
+            var btnFechar = document.getElementById('btnFecharModal');
+            var btnCancelar = document.getElementById('btnCancelarModal');
+            var formRelatorio = document.getElementById('formRelatorio');
+
+            if (btnAbrir) {
+                btnAbrir.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    modal.style.display = 'flex';
+                });
+            }
+
+            function fecharModal() { modal.style.display = 'none'; }
+
+            if (btnFechar) btnFechar.addEventListener('click', fecharModal);
+            if (btnCancelar) btnCancelar.addEventListener('click', fecharModal);
+
+            window.addEventListener('click', function(e) {
+                if (e.target === modal) fecharModal();
+            });
+
+            // EXPORTAÇÃO
+            formRelatorio.addEventListener('submit', function(e) {
+                e.preventDefault();
+                var modulo = document.getElementById('relModulo').value;
+                var formato = document.getElementById('relFormato').value;
+                var table = document.querySelector('.results table');
+                var csvData = [];
+
+                if (table) {
+                    var rows = table.querySelectorAll('tr');
+                    rows.forEach(function(row) {
+                        var cols = row.querySelectorAll('th, td');
+                        var rowData = [];
+                        cols.forEach(function(col) {
+                            if (!col.querySelector('input[type="checkbox"]')) {
+                                rowData.push('"' + col.innerText.trim().replace(/"/g, '""') + '"');
+                            }
+                        });
+                        if (rowData.length > 0) csvData.push(rowData.join(';'));
+                    });
+                } else {
+                    csvData.push(['Modulo', 'Status']);
+                    csvData.push([modulo.toUpperCase(), 'Exportado com Sucesso']);
+                    csvData = csvData.map(r => Array.isArray(r) ? r.join(';') : r);
+                }
+
+                var content = '\uFEFF' + csvData.join('\n');
+                var mimeType = formato === 'excel' ? 'application/vnd.ms-excel' : 'text/csv;charset=utf-8;';
+                var extension = formato === 'excel' ? 'xls' : 'csv';
+
+                var blob = new Blob([content], { type: mimeType });
+                var link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `Relatorio_${modulo}_${new Date().toISOString().slice(0,10)}.${extension}`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                fecharModal();
+            });
+        }
+
+        // LIMPA CARACTERES '/' SOLTOS NO CABEÇALHO
+        var userTools = document.getElementById('user-tools');
+        if (userTools) {
+            userTools.childNodes.forEach(function(node) {
+                if (node.nodeType === Node.TEXT_NODE && node.textContent.includes('/')) {
+                    node.textContent = node.textContent.replace(/\//g, '');
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

@@ -23,6 +23,3 @@ Criar o template `detalhe_projeto.html` com layout responsivo utilizando CSS nat
 
 # Alternativa descartada
 * **Uso de bibliotecas externas complexas de frontend (React/Vue):** Descartado para manter a simplicidade do projeto acadêmico e utilizar os recursos nativos do Django Templates.
-
-# Commit
-`feat: implementacao do template detalhe_projeto e padronizacao da estrutura de templates`

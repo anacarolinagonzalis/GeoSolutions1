@@ -8,3 +8,105 @@
 .field-password form {
     display: block !important;
 }
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&display=swap');
+
+/* ANULA TODAS AS VARIÁVEIS DE TEMA DO DJANGO 5 */
+:root, [data-theme="light"], [data-theme="dark"] {
+    --primary: #12341e !important;
+    --secondary: #1f4e2d !important;
+    --accent: #3ee472 !important;
+    --header-bg: #12341e !important;
+    --header-color: #ffffff !important;
+    --header-link-color: #ffffff !important;
+    --breadcrumbs-bg: #eaf2ec !important;
+    --breadcrumbs-link-color: #12341e !important;
+    --body-bg: #f4f8f5 !important;
+    --darkmode-bg: #12341e !important;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif !important;
+    background-color: #f4f8f5 !important;
+    color: #2c3e50 !important;
+}
+
+/* CABEÇALHO SUPERIOR */
+#header, header#header {
+    background: #12341e !important;
+    background-color: #12341e !important;
+    color: #ffffff !important;
+    padding: 12px 20px !important;
+}
+
+#site-name a {
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 1.4rem !important;
+    font-weight: 800 !important;
+    color: #ffffff !important;
+    text-decoration: none !important;
+}
+
+#site-name a span.highlight { color: #3ee472 !important; }
+#site-name a span.brand-sub { color: #e2f0d9 !important; font-weight: 600 !important; }
+
+/* BREADCRUMBS */
+div.breadcrumbs {
+    background: #eaf2ec !important;
+    color: #2e8b57 !important;
+    padding: 10px 20px !important;
+    border-bottom: 1px solid #d0e2d4 !important;
+    font-weight: 600 !important;
+}
+
+div.breadcrumbs a { color: #12341e !important; font-weight: 700 !important; }
+div.breadcrumbs a[href*="/admin/core/"] { display: none !important; }
+
+/* REGRAS DO USER TOOLS E ESCONDER 'VER O SITE' */
+#user-tools a[href="/"],
+#user-tools a[href*="/cliente/painel/"],
+.viewsite-link {
+    display: none !important;
+}
+
+#user-tools a, #user-tools button, #user-tools form button {
+    background-color: #ffffff !important;
+    color: #12341e !important;
+    padding: 6px 12px !important;
+    border: none !important;
+    border-radius: 6px !important;
+    font-weight: 700 !important;
+    font-size: 0.78rem !important;
+    text-transform: uppercase !important;
+    cursor: pointer !important;
+}
+
+/* MÓDULOS E TABELAS EM VERDE */
+.module h2, .module caption, #changelist table thead th {
+    background: #12341e !important;
+    background-color: #12341e !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+}
+
+.module table tbody tr { background-color: #f4f8f5 !important; }
+.module table tbody tr:hover td { background-color: #e2f0d9 !important; }
+
+/* TELA DE LOGIN */
+body.login {
+    background: linear-gradient(135deg, #12341e 0%, #1f4e2d 100%) !important;
+}
+
+body.login #container {
+    background: #ffffff !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3) !important;
+    padding: 30px !important;
+}
+
+body.login input[type=submit] {
+    background: #12341e !important;
+    color: #ffffff !important;
+    border-radius: 6px !important;
+    font-weight: 800 !important;
+}
