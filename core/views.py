@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from .models import Projeto, Cliente, ObservacaoCliente
+from .mongo_utils import registrar_log_auditoria
 
 
 def _obter_ou_criar_cliente(user):
@@ -28,13 +29,22 @@ def painel_cliente(request):
             cliente = _obter_ou_criar_cliente(request.user)
             hoje = timezone.now().date()
             
-            Projeto.objects.create(
+            projeto = Projeto.objects.create(
                 titulo=titulo,
                 cliente=cliente,
                 status='EM_ANALISE',
                 data_inicio=hoje,
                 prazo_vencimento=hoje + timedelta(days=30)
             )
+
+            # Grava o Log NoSQL no MongoDB Atlas
+            registrar_log_auditoria(
+                projeto_id=projeto.id,
+                usuario=request.user.username,
+                acao="PROJETO_CRIADO_PAINEL",
+                detalhes={"titulo": projeto.titulo}
+            )
+
             return redirect('painel_cliente')
 
     if request.user.is_staff:
@@ -63,7 +73,6 @@ def solicitar_projeto(request):
             cliente = _obter_ou_criar_cliente(request.user)
             hoje = timezone.now().date()
             
-            # Mapeamento para rótulos legíveis no título do projeto
             DIC_TIPOS_SERVICO = {
                 'LICENCIAMENTO': 'Licenciamento Ambiental',
                 'LAUDO_TECNICO': 'Laudo Técnico Ambiental',
@@ -83,7 +92,14 @@ def solicitar_projeto(request):
                 prazo_vencimento=hoje + timedelta(days=30)
             )
 
-            # Grava a descrição enviada no modelo ObservacaoCliente
+            # Grava o Log NoSQL no MongoDB Atlas
+            registrar_log_auditoria(
+                projeto_id=projeto.id,
+                usuario=request.user.username,
+                acao="SOLICITACAO_PROJETO_CRIADA",
+                detalhes={"titulo": projeto.titulo, "tipo_servico": tipo_servico}
+            )
+
             if descricao:
                 ObservacaoCliente.objects.create(
                     projeto=projeto,
@@ -113,4 +129,4 @@ def contador_projetos_htmx(request):
     else:
         total = Projeto.objects.filter(cliente__usuario_vinculado=request.user).count()
         
-    return render(request, 'core/cliente/_contador_projetos.html', {'total_projetos': total, 'total': total})
+    return render(request, 'core/_contador_projetos.html', {'total_projetos': total, 'total': total})
