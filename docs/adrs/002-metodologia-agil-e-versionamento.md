@@ -25,5 +25,5 @@ Adotar a metodologia ágil **Scrum** utilizando a ferramenta **Taiga** para a ge
 * **Trello:** Descartado por não ter suporte nativo ao Scrum (sprints, pontos de história) de forma direta na versão gratuita.
 * **Envio manual de arquivos por e-mail/ZIP:** Descartado por ser propenso a perda de código e falta de controle de versões.
 
-# Commit
-`docs: criacao do script de automacao do git e integracao com github`
+## Observaçao
+* Todo projeto desenvolvido com apoio de IA

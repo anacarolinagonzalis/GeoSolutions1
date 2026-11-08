@@ -14,3 +14,6 @@ Necessidade de extração de relatórios e auditorias dos módulos cadastrados s
 ## Consequências
 * **Positivas:** Exportação instantânea do lado do cliente (*client-side*), sem overhead no servidor Django.
 * **Negativas:** A exportação direta da tabela DOM é limitada aos dados atualmente carregados/visíveis no *changelist*.
+
+## Observaçao
+* Todo projeto desenvolvido com apoio de IA

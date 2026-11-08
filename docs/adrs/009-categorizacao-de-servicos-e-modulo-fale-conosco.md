@@ -15,3 +15,6 @@ Na tela de solicitação do cliente (`/cliente/solicitar/`), o formulário exigi
 ## Consequências
 * **Positivas:** Facilita a triagem por parte da equipe técnica e separa dúvidas gerais de projetos em andamento no admin.
 * **Negativas:** O filtro do Fale Conosco depende do prefixo `[FALE CONOSCO]` mantido na string do título do projeto.
+
+## Observaçao
+* Todo projeto desenvolvido com apoio de IA

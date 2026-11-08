@@ -24,5 +24,5 @@ Utilizar o **Django ORM** com **Persistência Relacional** para o cadastro estru
 * **Tabela Única com dezenas de campos nulos:** Descartada por poluir o banco de dados e gerar inconsistências quando um serviço não utiliza determinados campos.
 * **Tabelas totalmente separadas sem relacionamento:** Descartada por dificultar a listagem unificada de todos os serviços de um projeto.
 
-# Commit
-`feat: criacao dos modelos de dados com suporte a polimorfismo e documentos`
+## Observaçao
+* Todo projeto desenvolvido com apoio de IA

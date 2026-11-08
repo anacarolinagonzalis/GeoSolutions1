@@ -25,5 +25,5 @@ Utilizar a página nativa do **Django Admin** customizada para a gestão complet
 * **Dar acesso ao Django Admin diretamente aos clientes:** Descartada por questões de segurança e poluição visual com recursos que o cliente não deve alterar.
 * **Não ter área restrita para clientes:** Descartada pois deixaria o acompanhamento dependente de trocas manuais de e-mails e mensagens de WhatsApp.
 
-# Commit
-`feat: implementacao do painel restrito do cliente e personalizacao do admin`
+## Observaçao
+* Todo projeto desenvolvido com apoio de IA

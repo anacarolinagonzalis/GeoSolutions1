@@ -15,3 +15,6 @@ O Django Admin nativo possui uma barra lateral (sidebar) padrão e visual genér
 ## Consequências
 * **Positivas:** Interface moderna, corporativa, mais limpa para os administradores e perfeitamente integrada à identidade visual da empresa.
 * **Negativas:** Requer manutenção manual do array de links no template caso novos módulos sejam adicionados ao admin no futuro.
+
+## Observaçao
+* Todo projeto desenvolvido com apoio de IA

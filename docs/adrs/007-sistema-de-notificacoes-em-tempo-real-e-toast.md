@@ -15,3 +15,6 @@ Quando um cliente cadastra uma nova demanda no portal, os administradores precis
 ## Consequências
 * **Positivas:** Notificação discreta, responsiva e inteligente; o aviso só é visível quando realmente há pendências aguardando triagem.
 * **Negativas:** Depende da requisição assíncrona (`fetch`) no carregamento do template base do admin.
+
+## Observaçao
+* Todo projeto desenvolvido com apoio de IA

@@ -26,5 +26,5 @@ Decidimos utilizar a linguagem **Python** na versão 3 com o framework **Django*
 * **Node.js com Express:** Descartado por exigir a configuração manual de banco de dados, rotas e painel administrativo, o que aumentaria a complexidade para desenvolvedores iniciantes.
 * **PHP Nativo:** Descartado devido ao maior risco de falhas de segurança e falta de padronização na estrutura do projeto.
 
-# Commit
-`init: criacao do ambiente python venv e estrutura base django`
+## Observaçao
+* Todo projeto desenvolvido com apoio de IA
