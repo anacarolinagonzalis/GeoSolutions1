@@ -113,4 +113,4 @@ def contador_projetos_htmx(request):
     else:
         total = Projeto.objects.filter(cliente__usuario_vinculado=request.user).count()
         
-    return render(request, 'core/_contador_projetos.html', {'total': total})
+    return render(request, 'core/cliente/_contador_projetos.html', {'total_projetos': total, 'total': total})
