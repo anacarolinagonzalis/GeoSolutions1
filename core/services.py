@@ -2,6 +2,7 @@ from datetime import timedelta
 from django.utils import timezone
 from .models import Projeto, Cliente, ObservacaoCliente
 from .mongo_utils import registrar_log_auditoria
+from .viewmodels import ProjetoViewModel
 
 
 def _obter_ou_criar_cliente(user):
@@ -21,18 +22,24 @@ def _obter_ou_criar_cliente(user):
 class ProjetoService:
     @staticmethod
     def obter_projetos_do_cliente(user):
-        """Retorna os projetos associados ao cliente do usuário logado."""
+        """Retorna os projetos encapsulados na ViewModel para exibição formatada."""
         try:
             if user.is_staff:
-                return Projeto.objects.all().order_by('-id')
-            return Projeto.objects.filter(cliente__usuario_vinculado=user).order_by('-id')
+                qs = Projeto.objects.all().order_by('-id')
+            else:
+                qs = Projeto.objects.filter(cliente__usuario_vinculado=user).order_by('-id')
+            
+            # Retorna a lista de objetos envelopados pela ViewModel
+            return [ProjetoViewModel(p) for p in qs]
         except Exception:
-            return Projeto.objects.none()
+            return []
 
     @staticmethod
     def contar_projetos_do_cliente(user):
         """Conta o número total de projetos do cliente."""
-        return ProjetoService.obter_projetos_do_cliente(user).count()
+        if user.is_staff:
+            return Projeto.objects.count()
+        return Projeto.objects.filter(cliente__usuario_vinculado=user).count()
 
     @staticmethod
     def criar_solicitacao(user, titulo, tipo_servico=None, descricao=""):

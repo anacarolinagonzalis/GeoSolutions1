@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Projeto
 from .services import ProjetoService
+from .viewmodels import ProjetoViewModel
 
 
 @login_required
@@ -45,11 +46,13 @@ def solicitar_projeto(request):
 @login_required
 def detalhe_projeto_cliente(request, pk):
     if request.user.is_staff:
-        projeto = get_object_or_404(Projeto, pk=pk)
+        projeto_obj = get_object_or_404(Projeto, pk=pk)
     else:
-        projeto = get_object_or_404(Projeto, pk=pk, cliente__usuario_vinculado=request.user)
+        projeto_obj = get_object_or_404(Projeto, pk=pk, cliente__usuario_vinculado=request.user)
 
-    return render(request, 'core/detalhe_projeto.html', {'projeto': projeto})
+    # Encapsula o objeto no ViewModel para formatar os dados de exibição da tela
+    projeto_vm = ProjetoViewModel(projeto_obj)
+    return render(request, 'core/detalhe_projeto.html', {'projeto': projeto_vm})
 
 
 @login_required
