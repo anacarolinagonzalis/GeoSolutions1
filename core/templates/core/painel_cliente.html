@@ -6,6 +6,13 @@
     <title>Portal do Cliente - GeoSolutions</title>
     {% load static %}
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- HTMX (SERVIDORES ASSÍNCRONOS) -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    
+    <!-- ALPINE.JS (REATIVIDADE DE INTERFACE NO NAVEGADOR) -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
     <style>
         * {
             box-sizing: border-box;
@@ -13,6 +20,8 @@
             padding: 0;
             font-family: 'Montserrat', sans-serif;
         }
+
+        [x-cloak] { display: none !important; }
 
         body {
             background-color: #f4f8f5;
@@ -119,10 +128,10 @@
         .btn-outline { background-color: #ffffff; color: #12341e; border: 2px solid #12341e; }
         .btn-outline:hover { background-color: #eaf2ec; transform: translateY(-2px); }
 
-        /* BLOCO DE CONTADOR DE PROJETOS */
         .status-container { 
             display: flex; 
             align-items: center; 
+            justify-content: space-between;
             background: #ffffff; 
             padding: 16px 22px; 
             border-radius: 8px; 
@@ -131,6 +140,25 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.06); 
             font-weight: 700;
             color: #12341e;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .btn-htmx-refresh {
+            background-color: #e2f0d9;
+            color: #12341e;
+            border: 1px solid #1f4e2d;
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-htmx-refresh:hover {
+            background-color: #1f4e2d;
+            color: #ffffff;
         }
 
         .projects-grid {
@@ -173,7 +201,6 @@
             grid-column: 1 / -1;
         }
 
-        /* ESTILOS DO POP-UP (MODAL DE PRAZOS) */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -182,7 +209,7 @@
             height: 100vh;
             background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(4px);
-            display: none;
+            display: flex;
             justify-content: center;
             align-items: center;
             z-index: 9999;
@@ -258,7 +285,7 @@
         }
     </style>
 </head>
-<body>
+<body x-data="{ modalPrazosOpen: false }">
 
     <!-- CABEÇALHO -->
     <header>
@@ -284,11 +311,13 @@
                 <a href="{% url 'solicitar_projeto' %}" class="btn-action btn-primary">
                     ➕ Incluir Solicitação
                 </a>
-                <button type="button" id="btnAcompanharPrazos" class="btn-action btn-secondary">
-                    ⏱️ Acompanhar Prazos
+                
+                <button type="button" @click="modalPrazosOpen = true" class="btn-action btn-secondary">
+                    Acompanhar Prazos
                 </button>
+                
                 <button type="button" id="btnExportarRelatorio" class="btn-action btn-outline">
-                    📄 Gerar Relatório
+                    Gerar Relatório
                 </button>
             </div>
         </div>
@@ -298,9 +327,15 @@
             <div id="area-contador">
                 {% include 'core/_contador_projetos.html' with total=total_projetos %}
             </div>
+            <button hx-get="{% url 'contador_projetos_htmx' %}" 
+                    hx-target="#area-contador" 
+                    hx-swap="innerHTML"
+                    class="btn-htmx-refresh">
+                Atualizar
+            </button>
         </div>
         
-        <!-- GRID DE PROJETOS DO BANCO -->
+        <!-- GRID DE PROJETOS -->
         <div class="projects-grid" id="lista-projetos">
             {% for projeto in projetos %}
                 <div class="card item-projeto">
@@ -323,12 +358,15 @@
 
     </div>
 
-    <!-- POP-UP (MODAL DE PRAZOS) -->
-    <div id="modalPrazos" class="modal-overlay">
+    <!-- MODAL CONTROLADO VIA ALPINE.JS -->
+    <div class="modal-overlay" 
+         x-show="modalPrazosOpen" 
+         x-cloak 
+         @click.self="modalPrazosOpen = false">
         <div class="modal-card">
             <div class="modal-header">
-                <h3>⏱️ Prazos e Cronograma dos Projetos</h3>
-                <button type="button" class="modal-close" id="btnFecharModalPrazos">&times;</button>
+                <h3>Prazos e Cronograma dos Projetos</h3>
+                <button type="button" class="modal-close" @click="modalPrazosOpen = false">&times;</button>
             </div>
             <div class="modal-body">
                 {% if projetos %}
@@ -355,39 +393,13 @@
                 {% endif %}
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn-modal-close" id="btnFecharModalPrazosFooter">Fechar</button>
+                <button type="button" class="btn-modal-close" @click="modalPrazosOpen = false">Fechar</button>
             </div>
         </div>
     </div>
 
     <!-- SCRIPTS -->
     <script>
-        // CONTROLE DO MODAL DE ACOMPANHAR PRAZOS
-        var modalPrazos = document.getElementById('modalPrazos');
-        var btnAcompanhar = document.getElementById('btnAcompanharPrazos');
-        var btnFecharX = document.getElementById('btnFecharModalPrazos');
-        var btnFecharBtn = document.getElementById('btnFecharModalPrazosFooter');
-
-        if (btnAcompanhar) {
-            btnAcompanhar.addEventListener('click', function() {
-                modalPrazos.style.display = 'flex';
-            });
-        }
-
-        function fecharModalPrazos() {
-            modalPrazos.style.display = 'none';
-        }
-
-        if (btnFecharX) btnFecharX.addEventListener('click', fecharModalPrazos);
-        if (btnFecharBtn) btnFecharBtn.addEventListener('click', fecharModalPrazos);
-
-        window.addEventListener('click', function(e) {
-            if (e.target === modalPrazos) {
-                fecharModalPrazos();
-            }
-        });
-
-        // SCRIPT DE EXPORTAR PLANILHA CSV
         document.getElementById('btnExportarRelatorio').addEventListener('click', function() {
             var cards = document.querySelectorAll('.item-projeto');
             if (cards.length === 0) {
