@@ -19,14 +19,15 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'polymorphic',  # Carregado antes do admin para suporte completo ao polimorfismo
-    'core',         # COLOCADO ANTES DO ADMIN: garante que os templates do admin sejam sobrescritos
+    'polymorphic',      # Carregado antes do admin para suporte completo ao polimorfismo
+    'core',             # COLOCADO ANTES DO ADMIN: garante que os templates do admin sejam sobrescritos
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',   # Django REST Framework para publicação da API REST
 ]
 
 MIDDLEWARE = [

@@ -1,7 +1,13 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.contrib.auth import views as auth_views
+from rest_framework.routers import DefaultRouter
 from core import views
+from core.api_views import ProjetoViewSet
+
+# Configuração do Router do Django REST Framework
+router = DefaultRouter()
+router.register(r'projetos', ProjetoViewSet, basename='projeto-api')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -16,4 +22,7 @@ urlpatterns = [
     path('cliente/solicitar/', views.solicitar_projeto, name='solicitar_projeto'),
     path('cliente/projeto/<int:pk>/', views.detalhe_projeto_cliente, name='detalhe_projeto_cliente'),
     path('cliente/contador-htmx/', views.contador_projetos_htmx, name='contador_projetos_htmx'),
+
+    # Rota da API REST Navegável
+    path('api/', include(router.urls)),
 ]
